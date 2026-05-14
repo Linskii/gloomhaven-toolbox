@@ -46,11 +46,47 @@ export function assetUrl(path) {
   return `${base.replace(/\/$/, '')}/assets/entities/${path}`;
 }
 
-export function entityImage(entity, { alt = '', className = '' } = {}) {
+// Cache of first-frame snapshots for animated assets — keyed by source URL.
+// Returns a Promise<blobURL> so static views can show the still frame
+// of an animated webp without playing the animation everywhere.
+const stillFrameCache = new Map();
+
+export function getStillFrame(src) {
+  if (stillFrameCache.has(src)) return stillFrameCache.get(src);
+  const promise = new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || 256;
+      canvas.height = img.naturalHeight || 256;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+      canvas.toBlob((blob) => {
+        if (blob) resolve(URL.createObjectURL(blob));
+        else reject(new Error('toBlob returned null'));
+      }, 'image/webp', 0.9);
+    };
+    img.onerror = () => reject(new Error('still-frame image load failed'));
+    img.src = src;
+  });
+  stillFrameCache.set(src, promise);
+  return promise;
+}
+
+export function entityImage(entity, { alt = '', className = '', animated = false } = {}) {
   const altText = alt || entity?.name || '';
-  if (entity?.image) {
-    return el('img', { src: assetUrl(entity.image), alt: altText, class: className });
+  if (!entity?.image) {
+    const initial = (entity?.name || '?').trim().charAt(0).toUpperCase() || '?';
+    return el('div', { class: `entity-placeholder ${className}` }, [initial]);
   }
-  const initial = (entity?.name || '?').trim().charAt(0).toUpperCase() || '?';
-  return el('div', { class: `entity-placeholder ${className}` }, [initial]);
+
+  const src = assetUrl(entity.image);
+  const img = el('img', { alt: altText, class: className });
+
+  if (entity.animated && !animated) {
+    // Show first-frame still. Fall back to animated if extraction fails.
+    getStillFrame(src).then((url) => { img.src = url; }).catch(() => { img.src = src; });
+  } else {
+    img.src = src;
+  }
+  return img;
 }
