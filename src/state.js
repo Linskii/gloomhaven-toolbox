@@ -1,6 +1,17 @@
 import { LIBRARY } from './defaults.js';
 
-const STORAGE_KEY = 'glenhaven-game-v2';
+const STORAGE_KEY = 'gloomhaven-game-v2';
+
+// One-time migration from typo'd key, then cleanup of older keys.
+try {
+  if (!localStorage.getItem(STORAGE_KEY)) {
+    const legacy = localStorage.getItem('glenhaven-game-v2');
+    if (legacy) localStorage.setItem(STORAGE_KEY, legacy);
+  }
+  localStorage.removeItem('glenhaven-game-v2');
+  localStorage.removeItem('glenhaven-state-v1');
+  localStorage.removeItem('glenhaven-seeded-v1');
+} catch {}
 
 function loadGame() {
   try {
@@ -16,12 +27,6 @@ function saveGame(game) {
   if (game == null) localStorage.removeItem(STORAGE_KEY);
   else localStorage.setItem(STORAGE_KEY, JSON.stringify(game));
 }
-
-// One-time cleanup of older keys.
-try {
-  localStorage.removeItem('glenhaven-state-v1');
-  localStorage.removeItem('glenhaven-seeded-v1');
-} catch {}
 
 const listeners = new Set();
 let state = {

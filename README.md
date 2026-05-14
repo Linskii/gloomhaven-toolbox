@@ -1,4 +1,4 @@
-# Glenhaven Initiative Tracker
+# Gloomhaven Initiative Tracker
 
 A static, single-page initiative tracker for Gloomhaven-style tabletop sessions. Dark-fantasy aesthetic, forward-facing perspective carousel, LocalStorage persistence. No backend — everything runs in the browser.
 
@@ -56,7 +56,7 @@ The Swiper coverflow config lives in [`src/views/carousel.js`](src/views/carouse
 
 ## State storage
 
-Everything persists to `localStorage` under the key `glenhaven-state-v1`. Clear that key to reset the whole app.
+Everything persists to `localStorage` under the key `gloomhaven-game-v2` (active game) and `gloomhaven-lang` (language). Clear those keys to reset the whole app.
 
 ## Tech
 

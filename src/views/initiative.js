@@ -1,5 +1,7 @@
-import { el, entityImage } from '../dom.js';
+import { el } from '../dom.js';
 import { getState, entityById, setInitiativeOrder, abandonGame } from '../state.js';
+import { t, entityName } from '../i18n/index.js';
+import { languageSwitcher } from './language-switcher.js';
 
 export function renderInitiative(mount, { navigate }) {
   const state = getState();
@@ -18,21 +20,19 @@ export function renderInitiative(mount, { navigate }) {
       el('button', {
         class: 'btn btn-ghost',
         onClick: () => {
-          if (confirm('Abandon this game and return to the splash?')) {
+          if (confirm(t('common.abandonConfirm'))) {
             abandonGame();
             navigate('splash');
           }
         },
-      }, ['✕ Abandon']),
-      el('h2', { class: 'top-bar-title' }, [`Round ${state.game.round} — Initiative`]),
-      el('div', { class: 'top-bar-spacer' }),
+      }, [t('common.abandonShort')]),
+      el('h2', { class: 'top-bar-title' }, [t('init.title', state.game.round)]),
+      el('div', { class: 'top-bar-actions' }, [languageSwitcher()]),
     ])
   );
 
   root.appendChild(
-    el('p', { class: 'page-subtitle' }, [
-      'Tap entities in the order they act this round. Skip anyone resting.',
-    ])
+    el('p', { class: 'page-subtitle' }, [t('init.subtitle')])
   );
 
   const grid = el('div', { class: 'init-grid' });
@@ -55,8 +55,7 @@ export function renderInitiative(mount, { navigate }) {
           updateStart();
         },
       }, [
-        el('div', { class: 'init-thumb' }, [entityImage(entity)]),
-        el('div', { class: 'init-name' }, [entity.name]),
+        el('div', { class: 'init-name' }, [entityName(entity)]),
         isSelected ? el('div', { class: 'init-badge' }, [String(idx + 1)]) : null,
       ]);
       grid.appendChild(tile);
@@ -70,7 +69,7 @@ export function renderInitiative(mount, { navigate }) {
       setInitiativeOrder(order);
       navigate('carousel');
     },
-  }, ['Start Round →']);
+  }, [t('init.start')]);
 
   function updateStart() {
     startBtn.disabled = order.length === 0;
@@ -79,7 +78,7 @@ export function renderInitiative(mount, { navigate }) {
 
   root.appendChild(
     el('div', { class: 'sticky-footer' }, [
-      el('span', { class: 'counter' }, ['Tap in order to set initiative']),
+      el('span', { class: 'counter' }, [t('init.footerHint')]),
       startBtn,
     ])
   );

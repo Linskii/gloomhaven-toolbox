@@ -1,4 +1,4 @@
-// Canonical Glenhaven entity library — ships with the app.
+// Canonical Gloomhaven entity library — ships with the app.
 // IDs are stable slugs derived from name, so saved games keep working across deploys.
 // To add or change entries: edit this file, commit, and redeploy.
 // To attach images: drop files into public/assets/entities/, add them to

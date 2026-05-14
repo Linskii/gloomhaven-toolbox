@@ -1,4 +1,5 @@
 import { getState, subscribe } from './state.js';
+import { onLanguageChange } from './i18n/index.js';
 import { renderSplash } from './views/splash.js';
 import { renderSetup } from './views/setup.js';
 import { renderInitiative } from './views/initiative.js';
@@ -55,4 +56,7 @@ export function initRouter(rootEl) {
       navigate('splash');
     }
   });
+
+  // Re-render whenever language changes.
+  onLanguageChange(() => render());
 }

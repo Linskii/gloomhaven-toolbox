@@ -1,9 +1,8 @@
 import { el } from '../dom.js';
+import { t } from '../i18n/index.js';
 
-export const REMINDERS = [
-  '… decay elements',
-  '… reshuffle attack modifier decks if ×2 / null was drawn',
-];
+// The reminder lines are referenced by key so they translate live.
+const REMINDER_KEYS = ['end.reminder1', 'end.reminder2'];
 
 export function openEndRoundModal({ round, onConfirm, onCancel }) {
   const overlay = el('div', { class: 'modal-overlay' });
@@ -28,26 +27,26 @@ export function openEndRoundModal({ round, onConfirm, onCancel }) {
 
   dialog.appendChild(
     el('div', { class: 'modal-header' }, [
-      el('h3', {}, [`End of Round ${round}`]),
+      el('h3', {}, [t('end.title', round)]),
     ])
   );
   dialog.appendChild(
-    el('p', { class: 'modal-hint reminder-lead' }, ['Don’t forget to …'])
+    el('p', { class: 'modal-hint reminder-lead' }, [t('end.lead')])
   );
   dialog.appendChild(
     el('ul', { class: 'reminders-list' },
-      REMINDERS.map((line) =>
+      REMINDER_KEYS.map((key) =>
         el('li', { class: 'reminder-item' }, [
           el('span', { class: 'reminder-dot' }),
-          el('span', {}, [line]),
+          el('span', {}, [t(key)]),
         ])
       )
     )
   );
   dialog.appendChild(
     el('div', { class: 'modal-footer' }, [
-      el('button', { class: 'btn btn-ghost', onClick: () => close(false) }, ['Back']),
-      el('button', { class: 'btn btn-primary', onClick: () => close(true) }, ['Begin Next Round →']),
+      el('button', { class: 'btn btn-ghost', onClick: () => close(false) }, [t('end.back')]),
+      el('button', { class: 'btn btn-primary', onClick: () => close(true) }, [t('end.next')]),
     ])
   );
 

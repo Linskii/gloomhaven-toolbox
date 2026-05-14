@@ -1,5 +1,6 @@
 import { el, entityImage } from '../dom.js';
 import { getState, entityById, insertIntoOrder, removeFromOrder } from '../state.js';
+import { t, entityName } from '../i18n/index.js';
 
 export function openEditRoundModal({ onChange, onClose }) {
   let selectedPoolId = null;
@@ -13,15 +14,13 @@ export function openEditRoundModal({ onChange, onClose }) {
   });
 
   const header = el('div', { class: 'modal-header' }, [
-    el('h3', {}, ['Edit Round']),
-    el('button', { class: 'btn btn-ghost', onClick: () => close() }, ['Close']),
+    el('h3', {}, [t('edit.title')]),
+    el('button', { class: 'btn btn-ghost', onClick: () => close() }, [t('common.close')]),
   ]);
   dialog.appendChild(header);
 
   dialog.appendChild(
-    el('p', { class: 'modal-hint' }, [
-      'Select a candidate on the right, then choose an insert slot on the left. Use ✕ to remove an entity from the round.',
-    ])
+    el('p', { class: 'modal-hint' }, [t('edit.hint')])
   );
 
   const body = el('div', { class: 'edit-round-body' });
@@ -35,7 +34,6 @@ export function openEditRoundModal({ onChange, onClose }) {
       return;
     }
     body.appendChild(renderOrderColumn(state, () => selectedPoolId, (id) => {
-      // Insert clicked: insert selectedPoolId at position id (gap index)
       if (selectedPoolId == null) return;
       insertIntoOrder(selectedPoolId, id);
       selectedPoolId = null;
@@ -59,7 +57,6 @@ export function openEditRoundModal({ onChange, onClose }) {
   document.body.appendChild(overlay);
   repaint();
 
-  // Esc to close
   const onKey = (e) => {
     if (e.key === 'Escape') close();
   };
@@ -70,7 +67,7 @@ export function openEditRoundModal({ onChange, onClose }) {
 
 function renderOrderColumn(state, getSelected, onInsertAt, afterRemove) {
   const col = el('div', { class: 'edit-col edit-col-order' }, [
-    el('h4', { class: 'edit-col-title' }, ['Current Order']),
+    el('h4', { class: 'edit-col-title' }, [t('edit.currentOrder')]),
   ]);
 
   const list = el('ol', { class: 'edit-order-list' });
@@ -88,12 +85,12 @@ function renderOrderColumn(state, getSelected, onInsertAt, afterRemove) {
         el('div', { class: 'edit-order-index' }, [String(idx + 1)]),
         el('div', { class: 'edit-order-thumb' }, [entityImage(entity)]),
         el('div', { class: 'edit-order-name' }, [
-          entity.name,
-          isCurrent ? el('span', { class: 'now-tag' }, [' • now']) : null,
+          entityName(entity),
+          isCurrent ? el('span', { class: 'now-tag' }, [' ', t('edit.now')]) : null,
         ]),
         el('button', {
           class: 'btn btn-ghost btn-sm danger',
-          title: 'Remove from round',
+          title: t('edit.removeTitle'),
           onClick: () => {
             removeFromOrder(id);
             afterRemove?.();
@@ -105,7 +102,7 @@ function renderOrderColumn(state, getSelected, onInsertAt, afterRemove) {
   });
 
   if (order.length === 0) {
-    list.appendChild(el('p', { class: 'empty' }, ['(no entities in this round)']));
+    list.appendChild(el('p', { class: 'empty' }, [t('edit.empty')]));
   }
 
   col.appendChild(list);
@@ -120,7 +117,7 @@ function insertGap(index, canInsert, onClick) {
       onClick: () => onClick(index),
     }, [
       el('span', { class: 'gap-line' }),
-      el('span', { class: 'gap-label' }, [canInsert ? `Insert here` : '＋']),
+      el('span', { class: 'gap-label' }, [canInsert ? t('edit.insertHere') : '＋']),
       el('span', { class: 'gap-line' }),
     ]),
   ]);
@@ -128,7 +125,7 @@ function insertGap(index, canInsert, onClick) {
 
 function renderCandidatesColumn(state, selectedId, onSelect) {
   const col = el('div', { class: 'edit-col edit-col-candidates' }, [
-    el('h4', { class: 'edit-col-title' }, ['Pool — Not in Round']),
+    el('h4', { class: 'edit-col-title' }, [t('edit.pool')]),
   ]);
 
   const inOrder = new Set(state.game.order);
@@ -138,7 +135,7 @@ function renderCandidatesColumn(state, selectedId, onSelect) {
     .filter(Boolean);
 
   if (candidates.length === 0) {
-    col.appendChild(el('p', { class: 'empty' }, ['Every entity in the scenario pool is already in the round.']));
+    col.appendChild(el('p', { class: 'empty' }, [t('edit.poolEmpty')]));
     return col;
   }
 
@@ -153,8 +150,8 @@ function renderCandidatesColumn(state, selectedId, onSelect) {
           onClick: () => onSelect(entity.id),
         }, [
           el('div', { class: 'candidate-thumb' }, [entityImage(entity)]),
-          el('div', { class: 'candidate-name' }, [entity.name]),
-          isSel ? el('div', { class: 'candidate-check' }, ['Selected']) : null,
+          el('div', { class: 'candidate-name' }, [entityName(entity)]),
+          isSel ? el('div', { class: 'candidate-check' }, [t('edit.selected')]) : null,
         ]),
       ])
     );

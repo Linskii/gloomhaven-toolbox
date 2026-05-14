@@ -5,6 +5,8 @@ import 'swiper/css/effect-coverflow';
 
 import { el, entityImage } from '../dom.js';
 import { getState, entityById, setCurrentTurnIndex, endRound, abandonGame, subscribe } from '../state.js';
+import { t, entityName } from '../i18n/index.js';
+import { languageSwitcher } from './language-switcher.js';
 import { openEditRoundModal } from './edit-round.js';
 import { openEndRoundModal } from './end-round.js';
 
@@ -19,33 +21,34 @@ export function renderCarousel(mount, { navigate }) {
   mount.appendChild(root);
 
   // Top bar
-  const roundLabel = el('span', { class: 'round-label' }, [`Round ${state.game.round}`]);
+  const roundLabel = el('span', { class: 'round-label' }, ['']);
   const turnLabel = el('span', { class: 'turn-label' }, ['']);
   const topBar = el('header', { class: 'top-bar carousel-top-bar' }, [
     el('button', {
       class: 'btn btn-ghost',
       onClick: () => {
-        if (confirm('Abandon this game and return to the splash?')) {
+        if (confirm(t('common.abandonConfirm'))) {
           abandonGame();
           navigate('splash');
         }
       },
     }, ['✕']),
     el('div', { class: 'top-bar-center' }, [
-      el('h2', { class: 'top-bar-title' }, ['Glenhaven']),
+      el('h2', { class: 'top-bar-title' }, [t('carousel.brand')]),
       el('div', { class: 'top-bar-meta' }, [roundLabel, ' • ', turnLabel]),
     ]),
     el('div', { class: 'top-bar-actions' }, [
+      languageSwitcher(),
       el('button', {
         class: 'btn btn-ghost',
-        title: 'Edit round (spawn / remove)',
+        title: t('carousel.editRoundTip'),
         onClick: () => {
           openEditRoundModal({
             onChange: () => rebuildSwiper(),
             onClose: () => rebuildSwiper(),
           });
         },
-      }, ['Edit Round']),
+      }, [t('carousel.editRound')]),
       el('button', {
         class: 'btn btn-primary',
         onClick: () => {
@@ -57,7 +60,7 @@ export function renderCarousel(mount, { navigate }) {
             },
           });
         },
-      }, ['End Round']),
+      }, [t('carousel.endRound')]),
     ]),
   ]);
   root.appendChild(topBar);
@@ -70,7 +73,7 @@ export function renderCarousel(mount, { navigate }) {
 
   // Navigation hint
   root.appendChild(
-    el('div', { class: 'carousel-hint' }, ['Swipe / drag • Use ← → keys'])
+    el('div', { class: 'carousel-hint' }, [t('carousel.hint')])
   );
 
   let swiper = null;
@@ -87,15 +90,16 @@ export function renderCarousel(mount, { navigate }) {
   }
 
   function buildSlide(entity, idx, total) {
+    const name = entityName(entity);
     return el('div', { class: 'swiper-slide carousel-slide' }, [
       el('div', { class: 'card' }, [
         el('div', { class: 'card-figure' }, [
-          entityImage(entity, { alt: entity.name, className: 'card-image' }),
+          entityImage(entity, { alt: name, className: 'card-image' }),
         ]),
         el('div', { class: 'card-meta' }, [
           el('div', { class: 'card-position' }, [`${idx + 1} / ${total}`]),
-          el('div', { class: 'card-name' }, [entity.name]),
-          el('div', { class: 'card-type' }, [typeLabel(entity.type)]),
+          el('div', { class: 'card-name' }, [name]),
+          el('div', { class: 'card-type' }, [t(`type.${entity.type}`)]),
         ]),
       ]),
     ]);
@@ -149,8 +153,10 @@ export function renderCarousel(mount, { navigate }) {
     const total = s.game.order.length;
     const idx = Math.min(s.game.currentTurnIndex, total - 1);
     const entity = entityById(s.game.order[idx]);
-    turnLabel.textContent = entity ? `Turn ${idx + 1}: ${entity.name}` : `Turn ${idx + 1}`;
-    roundLabel.textContent = `Round ${s.game.round}`;
+    turnLabel.textContent = entity
+      ? t('carousel.turn', idx + 1, entityName(entity))
+      : t('carousel.turn', idx + 1, '');
+    roundLabel.textContent = t('carousel.round', s.game.round);
   }
 
   rebuildSwiper();
@@ -161,11 +167,4 @@ export function renderCarousel(mount, { navigate }) {
     unsub();
     if (swiper) { swiper.destroy(true, true); swiper = null; }
   };
-}
-
-function typeLabel(type) {
-  if (type === 'PC') return 'Player Character';
-  if (type === 'EnemyGroup') return 'Enemy Group';
-  if (type === 'Ally') return 'Ally';
-  return type;
 }

@@ -1,5 +1,7 @@
 import { el, entityImage } from '../dom.js';
 import { getState, startNewGame } from '../state.js';
+import { t, entityName } from '../i18n/index.js';
+import { languageSwitcher } from './language-switcher.js';
 
 export function renderSetup(mount, { navigate }) {
   const state = getState();
@@ -11,22 +13,23 @@ export function renderSetup(mount, { navigate }) {
 
   root.appendChild(
     el('header', { class: 'top-bar' }, [
-      el('button', { class: 'btn btn-ghost', onClick: () => navigate('splash') }, ['← Back']),
-      el('h2', { class: 'top-bar-title' }, ['Choose Your Scenario']),
-      el('div', { class: 'top-bar-spacer' }),
+      el('button', { class: 'btn btn-ghost', onClick: () => navigate('splash') }, [t('common.back')]),
+      el('h2', { class: 'top-bar-title' }, [t('setup.title')]),
+      el('div', { class: 'top-bar-actions' }, [languageSwitcher()]),
     ])
   );
 
   const grid = el('div', { class: 'setup-grid' });
   root.appendChild(grid);
 
-  const pcColumn = renderColumn('Player Characters', 'PC');
-  const enemyColumn = renderColumn('Enemies & Allies', ['EnemyGroup', 'Ally']);
+  const pcColumn = renderColumn(t('setup.colPCs'), 'PC');
+  const enemyColumn = renderColumn(t('setup.colEnemies'), ['EnemyGroup', 'Ally']);
   grid.appendChild(pcColumn);
   grid.appendChild(enemyColumn);
 
+  const footerCounter = el('span', { class: 'counter' }, [t('common.selected', selected.size)]);
   const footer = el('div', { class: 'sticky-footer' }, [
-    el('span', { class: 'counter' }, [counterText()]),
+    footerCounter,
     el('button', {
       class: 'btn btn-primary btn-large',
       onClick: () => {
@@ -34,16 +37,12 @@ export function renderSetup(mount, { navigate }) {
         startNewGame([...selected]);
         navigate('initiative');
       },
-    }, ['Start Game →']),
+    }, [t('setup.start')]),
   ]);
   root.appendChild(footer);
 
-  function counterText() {
-    return `${selected.size} selected`;
-  }
-
   function updateFooter() {
-    footer.querySelector('.counter').textContent = counterText();
+    footerCounter.textContent = t('common.selected', selected.size);
   }
 
   function renderColumn(title, typeFilter) {
@@ -53,7 +52,7 @@ export function renderSetup(mount, { navigate }) {
     const search = el('input', {
       class: 'input',
       type: 'search',
-      placeholder: 'Filter…',
+      placeholder: t('common.filter'),
       oninput: (e) => {
         filters[filterKey] = e.target.value.toLowerCase();
         repaintList();
@@ -66,12 +65,13 @@ export function renderSetup(mount, { navigate }) {
       while (list.firstChild) list.removeChild(list.firstChild);
       const items = state.library
         .filter((e) => types.includes(e.type))
-        .filter((e) => e.name.toLowerCase().includes(filters[filterKey]));
+        .map((e) => ({ entity: e, label: entityName(e) }))
+        .filter((x) => x.label.toLowerCase().includes(filters[filterKey]));
       if (items.length === 0) {
-        list.appendChild(el('p', { class: 'empty' }, ['(none)']));
+        list.appendChild(el('p', { class: 'empty' }, [t('common.none')]));
         return;
       }
-      for (const entity of items) {
+      for (const { entity, label } of items) {
         const isSel = selected.has(entity.id);
         const tile = el('button', {
           class: `pick-tile ${isSel ? 'is-selected' : ''}`,
@@ -83,8 +83,8 @@ export function renderSetup(mount, { navigate }) {
             updateFooter();
           },
         }, [
-          el('div', { class: 'pick-thumb' }, [entityImage(entity)]),
-          el('div', { class: 'pick-name' }, [entity.name]),
+          el('div', { class: 'pick-thumb' }, [entityImage(entity, { alt: label })]),
+          el('div', { class: 'pick-name' }, [label]),
           isSel ? el('div', { class: 'pick-check' }, ['✓']) : null,
         ]);
         list.appendChild(tile);
