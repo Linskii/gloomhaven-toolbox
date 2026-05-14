@@ -1,30 +1,33 @@
-const STORAGE_KEY = 'glenhaven-state-v1';
+import { LIBRARY } from './defaults.js';
 
-const DEFAULT_STATE = {
-  library: [],
-  game: null,
-};
+const STORAGE_KEY = 'glenhaven-game-v2';
 
-function loadFromStorage() {
+function loadGame() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return structuredClone(DEFAULT_STATE);
-    const parsed = JSON.parse(raw);
-    return {
-      library: Array.isArray(parsed.library) ? parsed.library : [],
-      game: parsed.game ?? null,
-    };
+    if (!raw) return null;
+    return JSON.parse(raw);
   } catch {
-    return structuredClone(DEFAULT_STATE);
+    return null;
   }
 }
 
-function saveToStorage(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+function saveGame(game) {
+  if (game == null) localStorage.removeItem(STORAGE_KEY);
+  else localStorage.setItem(STORAGE_KEY, JSON.stringify(game));
 }
 
+// One-time cleanup of older keys.
+try {
+  localStorage.removeItem('glenhaven-state-v1');
+  localStorage.removeItem('glenhaven-seeded-v1');
+} catch {}
+
 const listeners = new Set();
-let state = loadFromStorage();
+let state = {
+  library: LIBRARY,
+  game: loadGame(),
+};
 
 function emit() {
   for (const fn of listeners) fn(state);
@@ -39,39 +42,10 @@ export function subscribe(fn) {
   return () => listeners.delete(fn);
 }
 
-export function update(mutator) {
+function update(mutator) {
   mutator(state);
-  saveToStorage(state);
+  saveGame(state.game);
   emit();
-}
-
-function uid() {
-  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
-}
-
-// ---------- Library ----------
-
-export function addLibraryEntry({ name, type, image }) {
-  update((s) => {
-    s.library.push({ id: uid(), name, type, image });
-  });
-}
-
-export function updateLibraryEntry(id, patch) {
-  update((s) => {
-    const entry = s.library.find((e) => e.id === id);
-    if (entry) Object.assign(entry, patch);
-  });
-}
-
-export function deleteLibraryEntry(id) {
-  update((s) => {
-    s.library = s.library.filter((e) => e.id !== id);
-    if (s.game) {
-      s.game.pool = s.game.pool.filter((eid) => eid !== id);
-      s.game.order = s.game.order.filter((eid) => eid !== id);
-    }
-  });
 }
 
 // ---------- Game ----------

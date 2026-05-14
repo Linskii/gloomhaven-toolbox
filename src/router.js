@@ -1,6 +1,5 @@
 import { getState, subscribe } from './state.js';
 import { renderSplash } from './views/splash.js';
-import { renderLibrary } from './views/library.js';
 import { renderSetup } from './views/setup.js';
 import { renderInitiative } from './views/initiative.js';
 import { renderCarousel } from './views/carousel.js';
@@ -11,7 +10,6 @@ let teardown = null;
 
 const views = {
   splash: renderSplash,
-  library: renderLibrary,
   setup: renderSetup,
   initiative: renderInitiative,
   carousel: renderCarousel,

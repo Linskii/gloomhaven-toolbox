@@ -1,4 +1,4 @@
-import { el, assetUrl } from '../dom.js';
+import { el, entityImage } from '../dom.js';
 import { getState, entityById, setInitiativeOrder, abandonGame } from '../state.js';
 
 export function renderInitiative(mount, { navigate }) {
@@ -55,7 +55,7 @@ export function renderInitiative(mount, { navigate }) {
           updateStart();
         },
       }, [
-        el('div', { class: 'init-thumb' }, [el('img', { src: assetUrl(entity.image), alt: '' })]),
+        el('div', { class: 'init-thumb' }, [entityImage(entity)]),
         el('div', { class: 'init-name' }, [entity.name]),
         isSelected ? el('div', { class: 'init-badge' }, [String(idx + 1)]) : null,
       ]);

@@ -3,7 +3,7 @@ import { EffectCoverflow, Keyboard, Mousewheel } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 
-import { el, assetUrl } from '../dom.js';
+import { el, entityImage } from '../dom.js';
 import { getState, entityById, setCurrentTurnIndex, endRound, abandonGame, subscribe } from '../state.js';
 import { openEditRoundModal } from './edit-round.js';
 import { openEndRoundModal } from './end-round.js';
@@ -90,7 +90,7 @@ export function renderCarousel(mount, { navigate }) {
     return el('div', { class: 'swiper-slide carousel-slide' }, [
       el('div', { class: 'card' }, [
         el('div', { class: 'card-figure' }, [
-          el('img', { class: 'card-image', src: assetUrl(entity.image), alt: entity.name }),
+          entityImage(entity, { alt: entity.name, className: 'card-image' }),
         ]),
         el('div', { class: 'card-meta' }, [
           el('div', { class: 'card-position' }, [`${idx + 1} / ${total}`]),

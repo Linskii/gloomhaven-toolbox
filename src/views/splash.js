@@ -31,10 +31,6 @@ export function renderSplash(mount, { navigate }) {
             navigate('setup');
           },
         }, ['Start a New Game']),
-        el('button', {
-          class: 'btn btn-ghost btn-large',
-          onClick: () => navigate('library'),
-        }, ['Manage Library']),
       ]),
     ]),
   ]);

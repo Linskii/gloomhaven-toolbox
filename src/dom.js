@@ -45,3 +45,12 @@ export function assetUrl(path) {
   const base = import.meta.env.BASE_URL || '/';
   return `${base.replace(/\/$/, '')}/assets/entities/${path}`;
 }
+
+export function entityImage(entity, { alt = '', className = '' } = {}) {
+  const altText = alt || entity?.name || '';
+  if (entity?.image) {
+    return el('img', { src: assetUrl(entity.image), alt: altText, class: className });
+  }
+  const initial = (entity?.name || '?').trim().charAt(0).toUpperCase() || '?';
+  return el('div', { class: `entity-placeholder ${className}` }, [initial]);
+}

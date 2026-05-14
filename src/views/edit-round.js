@@ -1,4 +1,4 @@
-import { el, assetUrl } from '../dom.js';
+import { el, entityImage } from '../dom.js';
 import { getState, entityById, insertIntoOrder, removeFromOrder } from '../state.js';
 
 export function openEditRoundModal({ onChange, onClose }) {
@@ -86,7 +86,7 @@ function renderOrderColumn(state, getSelected, onInsertAt, afterRemove) {
     list.appendChild(
       el('li', { class: `edit-order-row ${isCurrent ? 'is-current' : ''}` }, [
         el('div', { class: 'edit-order-index' }, [String(idx + 1)]),
-        el('div', { class: 'edit-order-thumb' }, [el('img', { src: assetUrl(entity.image), alt: '' })]),
+        el('div', { class: 'edit-order-thumb' }, [entityImage(entity)]),
         el('div', { class: 'edit-order-name' }, [
           entity.name,
           isCurrent ? el('span', { class: 'now-tag' }, [' • now']) : null,
@@ -152,7 +152,7 @@ function renderCandidatesColumn(state, selectedId, onSelect) {
           type: 'button',
           onClick: () => onSelect(entity.id),
         }, [
-          el('div', { class: 'candidate-thumb' }, [el('img', { src: assetUrl(entity.image), alt: '' })]),
+          el('div', { class: 'candidate-thumb' }, [entityImage(entity)]),
           el('div', { class: 'candidate-name' }, [entity.name]),
           isSel ? el('div', { class: 'candidate-check' }, ['Selected']) : null,
         ]),

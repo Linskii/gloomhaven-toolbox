@@ -1,4 +1,4 @@
-import { el, assetUrl } from '../dom.js';
+import { el, entityImage } from '../dom.js';
 import { getState, startNewGame } from '../state.js';
 
 export function renderSetup(mount, { navigate }) {
@@ -16,19 +16,6 @@ export function renderSetup(mount, { navigate }) {
       el('div', { class: 'top-bar-spacer' }),
     ])
   );
-
-  if (state.library.length === 0) {
-    root.appendChild(
-      el('div', { class: 'panel' }, [
-        el('p', { class: 'empty' }, [
-          'Your library is empty. ',
-          el('button', { class: 'btn-link', onClick: () => navigate('library') }, ['Add some entities first']),
-          '.',
-        ]),
-      ])
-    );
-    return;
-  }
 
   const grid = el('div', { class: 'setup-grid' });
   root.appendChild(grid);
@@ -96,7 +83,7 @@ export function renderSetup(mount, { navigate }) {
             updateFooter();
           },
         }, [
-          el('div', { class: 'pick-thumb' }, [el('img', { src: assetUrl(entity.image), alt: '' })]),
+          el('div', { class: 'pick-thumb' }, [entityImage(entity)]),
           el('div', { class: 'pick-name' }, [entity.name]),
           isSel ? el('div', { class: 'pick-check' }, ['✓']) : null,
         ]);
