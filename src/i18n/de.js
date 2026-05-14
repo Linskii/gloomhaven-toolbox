@@ -47,6 +47,7 @@ export default {
     'setup.colPCs':          'Spielercharaktere',
     'setup.colEnemies':      'Gegner & Verbündete',
     'setup.start':           'Spiel starten →',
+    'setup.renamePlaceholder': (classLabel) => `${classLabel} umbenennen (optional)`,
 
     'init.title':            (round) => `Runde ${round} — Initiative`,
     'init.subtitle':         'Wesen in der Reihenfolge ihres Zugs antippen. Wer pausiert, bleibt ungetippt.',

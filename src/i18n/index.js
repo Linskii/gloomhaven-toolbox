@@ -12,6 +12,7 @@
 
 import en from './en.js';
 import de from './de.js';
+import { getCustomName } from '../custom-names.js';
 
 const LANGUAGES = { en, de };
 const STORAGE_KEY = 'gloomhaven-lang';
@@ -68,8 +69,12 @@ export function t(key, ...args) {
   return typeof val === 'function' ? val(...args) : val;
 }
 
-export function entityName(entity) {
+export function entityName(entity, { custom = true } = {}) {
   if (!entity) return '';
+  if (custom) {
+    const personal = getCustomName(entity.id);
+    if (personal) return personal;
+  }
   const override = LANGUAGES[current].entities?.[entity.id];
   return override || entity.name;
 }

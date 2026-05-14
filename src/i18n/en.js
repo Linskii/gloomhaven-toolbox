@@ -42,6 +42,7 @@ export default {
     'setup.colPCs':          'Player Characters',
     'setup.colEnemies':      'Enemies & Allies',
     'setup.start':           'Start Game →',
+    'setup.renamePlaceholder': (classLabel) => `Rename ${classLabel} (optional)`,
 
     'init.title':            (round) => `Round ${round} — Initiative`,
     'init.subtitle':         'Tap entities in the order they act this round. Skip anyone resting.',

@@ -58,5 +58,5 @@ export const LIBRARY = [
   entry('Sun Demon',         'EnemyGroup'),
   entry('Vermling Scout',    'EnemyGroup'),
   entry('Vermling Shaman',   'EnemyGroup'),
-  entry('Wind Demon',        'EnemyGroup'),
+  entry('Wind Demon',        'EnemyGroup', 'private/wind-demon.png'),
 ];

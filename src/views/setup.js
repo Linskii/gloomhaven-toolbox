@@ -1,6 +1,7 @@
 import { el, entityImage } from '../dom.js';
 import { getState, startNewGame } from '../state.js';
 import { t, entityName } from '../i18n/index.js';
+import { getCustomName, setCustomName } from '../custom-names.js';
 import { languageSwitcher } from './language-switcher.js';
 
 export function renderSetup(mount, { navigate }) {
@@ -73,6 +74,7 @@ export function renderSetup(mount, { navigate }) {
       }
       for (const { entity, label } of items) {
         const isSel = selected.has(entity.id);
+        const nameEl = el('div', { class: 'pick-name' }, [label]);
         const tile = el('button', {
           class: `pick-tile ${isSel ? 'is-selected' : ''}`,
           type: 'button',
@@ -84,10 +86,34 @@ export function renderSetup(mount, { navigate }) {
           },
         }, [
           el('div', { class: 'pick-thumb' }, [entityImage(entity, { alt: label })]),
-          el('div', { class: 'pick-name' }, [label]),
+          nameEl,
           isSel ? el('div', { class: 'pick-check' }, ['✓']) : null,
         ]);
-        list.appendChild(tile);
+
+        // Inline rename input for PCs once selected.
+        if (entity.type === 'PC' && isSel) {
+          const classLabel = entityName(entity, { custom: false });
+          const input = el('input', {
+            class: 'pick-name-input',
+            type: 'text',
+            placeholder: classLabel,
+            value: getCustomName(entity.id),
+            maxLength: 24,
+            'aria-label': t('setup.renamePlaceholder', classLabel),
+            onInput: (e) => {
+              setCustomName(entity.id, e.target.value);
+              nameEl.textContent = entityName(entity);
+            },
+            onClick: (e) => e.stopPropagation(),
+            onKeydown: (e) => {
+              if (e.key === 'Enter') e.target.blur();
+              e.stopPropagation();
+            },
+          });
+          list.appendChild(el('div', { class: 'pick-tile-wrap' }, [tile, input]));
+        } else {
+          list.appendChild(tile);
+        }
       }
     }
 
