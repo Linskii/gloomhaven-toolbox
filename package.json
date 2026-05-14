@@ -1,0 +1,19 @@
+{
+  "name": "glenhaven-initiative-tracker",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "vite build && gh-pages -d dist"
+  },
+  "dependencies": {
+    "swiper": "^11.1.14"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.2.0",
+    "vite": "^5.4.10"
+  }
+}
