@@ -8,15 +8,15 @@ function slug(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-function entry(name, type, image = null, animated = false) {
-  return { id: slug(name), name, type, image, animated };
+function entry(name, type, image = null) {
+  return { id: slug(name), name, type, image };
 }
 
 export const LIBRARY = [
   // ----- Starting Player Characters (base game, no spoilers) -----
   entry('Brute',       'PC'),
   entry('Tinkerer',    'PC'),
-  entry('Spellweaver', 'PC', 'spellweaver.webp', true),
+  entry('Spellweaver', 'PC'),
   entry('Scoundrel',   'PC'),
   entry('Cragheart',   'PC'),
   entry('Mindthief',   'PC'),

@@ -91,13 +91,11 @@ export function renderCarousel(mount, { navigate }) {
 
   function buildSlide(entity, idx, total) {
     const name = entityName(entity);
-    const figure = el('div', { class: 'card-figure' }, [
-      entityImage(entity, { alt: name, className: 'card-image' }),
-    ]);
-    figure.dataset.entityId = entity.id;
     return el('div', { class: 'swiper-slide carousel-slide' }, [
       el('div', { class: 'card' }, [
-        figure,
+        el('div', { class: 'card-figure' }, [
+          entityImage(entity, { alt: name, className: 'card-image' }),
+        ]),
         el('div', { class: 'card-meta' }, [
           el('div', { class: 'card-position' }, [`${idx + 1} / ${total}`]),
           el('div', { class: 'card-name' }, [name]),
@@ -105,30 +103,6 @@ export function renderCarousel(mount, { navigate }) {
         ]),
       ]),
     ]);
-  }
-
-  // For animated entities: only the active slide plays the animation.
-  // Others show the first-frame still. Swap by replacing the .card-image element.
-  function syncSlideAnimation() {
-    if (!swiper) return;
-    const slides = wrapper.children;
-    for (let i = 0; i < slides.length; i++) {
-      const figure = slides[i].querySelector('.card-figure');
-      if (!figure) continue;
-      const entity = entityById(figure.dataset.entityId);
-      if (!entity?.animated) continue;
-      const wantAnimated = i === swiper.activeIndex;
-      if (figure.dataset.mode === (wantAnimated ? 'animated' : 'still')) continue;
-      figure.dataset.mode = wantAnimated ? 'animated' : 'still';
-      const old = figure.querySelector('.card-image');
-      const fresh = entityImage(entity, {
-        alt: entityName(entity),
-        className: 'card-image',
-        animated: wantAnimated,
-      });
-      if (old) old.replaceWith(fresh);
-      else figure.appendChild(fresh);
-    }
   }
 
   function rebuildSwiper() {
@@ -166,13 +140,11 @@ export function renderCarousel(mount, { navigate }) {
           if (!swiper) return;
           setCurrentTurnIndex(swiper.activeIndex);
           updateTurnLabel();
-          syncSlideAnimation();
         },
       },
     });
 
     updateTurnLabel();
-    syncSlideAnimation();
   }
 
   function updateTurnLabel() {
