@@ -2,6 +2,7 @@ import { el } from '../dom.js';
 import { getState, abandonGame } from '../state.js';
 import { t } from '../i18n/index.js';
 import { languageSwitcher } from './language-switcher.js';
+import { openSettingsModal } from './settings.js';
 
 export function renderSplash(mount, { navigate }) {
   const state = getState();
@@ -34,6 +35,13 @@ export function renderSplash(mount, { navigate }) {
             navigate('setup');
           },
         }, [t('splash.startNew')]),
+      ]),
+      el('div', { class: 'splash-foot' }, [
+        el('button', {
+          class: 'btn-link',
+          type: 'button',
+          onClick: () => openSettingsModal({ onClose: () => navigate('splash') }),
+        }, [t('splash.manageFigures')]),
       ]),
     ]),
   ]);

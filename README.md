@@ -40,11 +40,23 @@ If your repo has a different name, either rename it or set `VITE_BASE` as a work
 
 ## Adding your own entity images
 
-1. Drop image files (PNG, transparent WebP, animated WebP, GIF) into `public/assets/entities/`.
-2. Add their filenames to `public/assets/entities/manifest.json`.
-3. The Library Manager image dropdown will pick them up on next load.
+There are two ways. Both keep the artwork off git.
 
-Transparent animated WebPs work great for idle animations on the carousel cards.
+### Local dev (this machine)
+
+Drop image files into `public/assets/entities/private/`. The folder is gitignored — nothing is committed. Filenames must match entity slugs (`brute.png`, `bandit-archer.png`, etc.). Vite serves them directly on `npm run dev`.
+
+### Other devices (phone, tablet, secondary laptop)
+
+Zip the contents of `public/assets/entities/private/`, then on the target device:
+
+1. Open the app, click **Manage figures…** at the bottom of the splash screen.
+2. Upload the zip.
+3. Files matching known entity slugs land in IndexedDB on that device.
+
+Each device keeps its own copy. The deployed GitHub Pages site stays artwork-free.
+
+Supported formats: PNG, WebP (including animated), JPG, GIF, SVG.
 
 ## Customizing reminders
 

@@ -3,3 +3,7 @@ dist
 .DS_Store
 .vite
 *.log
+
+# Private character art — kept locally per machine, distributed to other
+# devices via the in-app zip upload (Manage figures). See README.
+public/assets/entities/private/

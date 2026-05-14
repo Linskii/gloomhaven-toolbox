@@ -46,11 +46,39 @@ export function assetUrl(path) {
   return `${base.replace(/\/$/, '')}/assets/entities/${path}`;
 }
 
+import { getUrl as getStoredImageUrl } from './image-store.js';
+
+function placeholder(name, className) {
+  const initial = (name || '?').trim().charAt(0).toUpperCase() || '?';
+  return el('div', { class: `entity-placeholder ${className}` }, [initial]);
+}
+
 export function entityImage(entity, { alt = '', className = '' } = {}) {
   const altText = alt || entity?.name || '';
-  if (entity?.image) {
-    return el('img', { src: assetUrl(entity.image), alt: altText, class: className });
-  }
-  const initial = (entity?.name || '?').trim().charAt(0).toUpperCase() || '?';
-  return el('div', { class: `entity-placeholder ${className}` }, [initial]);
+
+  if (!entity) return placeholder('?', className);
+
+  const img = el('img', { alt: altText, class: className });
+  const staticFallback = entity.image ? assetUrl(entity.image) : null;
+
+  // Falls back to a placeholder div if the <img> can't load anything.
+  img.onerror = () => {
+    img.replaceWith(placeholder(entity.name, className));
+  };
+
+  // Resolve preferred source: IndexedDB (per-device upload) → static asset.
+  getStoredImageUrl(entity.id).then((url) => {
+    if (url) {
+      img.src = url;
+    } else if (staticFallback) {
+      img.src = staticFallback;
+    } else {
+      img.replaceWith(placeholder(entity.name, className));
+    }
+  }).catch(() => {
+    if (staticFallback) img.src = staticFallback;
+    else img.replaceWith(placeholder(entity.name, className));
+  });
+
+  return img;
 }

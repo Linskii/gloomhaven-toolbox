@@ -333,6 +333,70 @@ body::before {
   margin-top: 1rem;
   min-width: min(360px, 90vw);
 }
+.splash-foot {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--ink-muted);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-decoration: underline;
+  text-decoration-color: rgba(255,255,255,0.18);
+  cursor: pointer;
+  padding: 0.4rem 0.6rem;
+  transition: color 0.18s;
+}
+.btn-link:hover { color: var(--candle); }
+
+/* ---------- Settings modal ---------- */
+.modal-settings { max-width: 560px; }
+.settings-body {
+  padding: 1rem 1.4rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  overflow: auto;
+}
+.settings-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.settings-status {
+  min-height: 1.4em;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  font-family: var(--font-sans);
+}
+.settings-slugs { display: flex; flex-direction: column; gap: 0.4rem; }
+.settings-count {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--candle);
+  letter-spacing: 0.04em;
+}
+.settings-slug-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.3rem;
+}
+.settings-slug-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: var(--bg-1);
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.55rem;
+}
+.settings-slug-name { color: var(--ink); font-family: var(--font-serif); }
+.settings-slug-id   { color: var(--ink-muted); font-size: 0.74rem; font-family: var(--font-mono, monospace); }
 
 /* ============================================================
    Library Manager
